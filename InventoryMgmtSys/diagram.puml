@@ -1,0 +1,353 @@
+@startuml class diagram
+!theme vibrant
+
+skinparam classAttributeIconSize 0
+
+hide empty members
+
+title Class Diagram
+
+class Program
+{
+    + {static} Main() : void <<static>>
+}
+
+class Inventory <<Singleton>>
+{
+    - _inventory : Dictionary<Product, int>
+    - _observers : List<IObserver>
+
+    + {static} {method} Instance : Inventory <<static readonly property>>
+    + {method} Products : Dictionary<Product, int> <<readonly property>>
+
+    - Inventory()
+    + Attach(IObserver observer) : void
+    + Detach(IObserver observer) : void
+    - Notify(KeyValuePair<Product, int> updatedProduct) : void
+    + AddProduct(Product product, int quantity) : void
+    + SubtractProduct(Product product, int quantity) : void
+    + RemoveProduct(Product product) : void
+    + ReplaceProduct(Product oldProduct, Product newProduct) : void
+    + HasProduct(Product product) : bool
+    + Save(string filename) : void
+}
+
+interface IObserver
+{
+    + Update([KeyValuePair<Product, int>? updatedProduct = null]) : void
+}
+
+class AutoBuyer <<Singleton>>
+{
+    - _enabled : bool
+    - _random : Random
+
+    + {static} {method} Instance : AutoBuyer <<static readonly property>>
+    + {method} Enabled : bool <<readonly property>>
+
+    - AutoBuyer()
+    + Update() : void
+    + Toggle() : void
+}
+
+abstract class Product <<abstract>>
+{
+    - _name : string
+    - _description : string
+    - _price : double
+    - _icon : Bitmap
+
+    + {static} {method} ProductType : List<Type> <<static readonly property>>
+    + {method} Name : string <<readonly property>>
+    + {method} Description : string <<readonly property>>
+    + {method} Price : double <<readonly property>>
+    + {method} Icon : Bitmap <<readonly property>>
+
+    + Product(string name, string description, double price, string iconName)
+    + Describe() : Dictionary<string, string>
+    + SetProperty(string key, string value) : void
+    + ToString() : string <<override>>
+}
+
+class BookProduct extends Product
+{
+    - _author : string
+    - _publisher : string
+    - _year : string
+
+    + BookProduct(string name, string description, double price, string author, string publisher, int year)
+    + BookProduct(string name, string description, double price)
+    + Describe() : Dictionary<string, string> <<override>>
+    + SetProperty(string key, string value) : void <<override>>
+}
+
+class ElectronicProduct extends Product
+{
+    - _brand : string
+    - _warranty : string
+
+    + ElectronicProduct(string name, string description, double price, string brand, string warranty)
+    + ElectronicProduct(string name, string description, double price)
+    + Describe() : Dictionary<string, string> <<override>>
+    + SetProperty(string key, string value) : void <<override>>
+}
+
+class GUI <<Singleton>>
+{
+    - _window : Window
+    - _currentState : UIState
+
+    + {static} {method} Instance : GUI <<static readonly property>>
+    + {method} Font : Font <<readonly property>>
+    + {method} FontBold : Font <<readonly property>>
+
+    - GUI()
+    + Run() : void
+    + ChangeState(UIState newState) : void
+}
+
+class TextInputHandler <<Singleton>>
+{
+    - _activeTextInput : TextInput?
+
+    + {method} {static} Instance : TextInputHandler <<static readonly property>>
+
+    - TextInputHandler()
+    + RequestStartInput(TextInput textInput) : void
+    + RequestStopActiveInput() : void
+    + RequestStopInputAndGetText(TextInput textInput) : string
+    + Update() : void
+}
+
+abstract class UIState <<abstract>>
+{
+    - _components : List<UIComponent>
+
+    # {method} Components : List<UIComponent> <<readonly property>>
+
+    + UIState()
+    + {abstract} HandleInput() : void
+    + {abstract} Draw() : void
+    + {abstract} Update() : void
+}
+
+class MainUIState extends UIState
+{
+    - _summaryBox : SummaryBox
+
+    + MainUIState()
+    + HandleInput() : void <<override>>
+    + Draw() : void <<override>>
+    + Update() : void <<override>>
+}
+
+class ProductUIState extends UIState
+{
+    + ProductUIState([Product? editingProduct = null], [Product? originProduct = null])
+    + HandleInput() : void <<override>>
+    + Draw() : void <<override>>
+    + Update() : void <<override>>
+}
+
+abstract class UIComponent <<abstract>>
+{
+    - _x : int
+    - _y : int
+    - _width : int
+    - _height : int
+    - _fontSize : int
+    - _color : Color
+    - _primaryColor : Color
+    - _secondaryColor : Color
+
+    # {method} X : int <<property>>
+    # {method} Y : int <<property>>
+    # {method} Color : Color <<property>>
+    # {method} Width : int <<readonly property>>
+    # {method} Height : int <<readonly property>>
+    # {method} FontSize : int <<readonly property>>
+    # {method} PrimaryColor : Color <<readonly property>>
+    # {method} SecondaryColor : Color <<readonly property>>
+
+    + UIComponent(int x, int y, int width, int height, string textureName, int fontSize)
+    + {abstract} Draw() : void
+    + HandleInput() : void
+    + DrawTexture() : void
+    + IsMouseHover() : bool
+    + IsMouseClick() : bool
+}
+
+class BitmapDisplay extends UIComponent
+{
+    - _bitmap : Bitmap
+    - _drawingOptions : DrawingOptions
+
+    + BitmapDisplay(int x, int y, int width, int height, Bitmap bitmap)
+    + Draw() : void <<override>>
+}
+
+class Button extends UIComponent
+{
+    - _action : Action
+    - _text : string
+
+    + Button (int x, int y, int width, int height, string text, Action action)
+    + HandleInput() : void <<override>>
+    + Draw() : void <<override>>
+    + DrawTexture() : void <<override>>
+}
+
+class InventoryUI extends UIComponent implements IObserver
+{
+    - _productUIs : List<ProductUI>
+
+    + InventoryUI(int x, int y)
+    + GenerateProductUIs() : void
+    + Draw() : void <<override>>
+    + HandleInput() : void <<override>>
+    + DrawTexture() : void <<override>>
+    + Update([KeyValuePair<Product, int>? updatedProduct = null]) : void
+}
+
+class ProductDetailBox extends UIComponent
+{
+    - _textInputs : Dictionary<string, TextInput>
+
+    - {method} Components : List<UIComponent> <<readonly property>>
+    + {method} CollectedData : Dictionary<string, textInput> <<readonly property>>
+
+    + ProductDetailBox(int x, int y, int width, int height, Product product)
+    + Draw() : void <<override>>
+    + DrawTexture() : void <<override>>
+}
+
+class ProductUI extends UIComponent
+{
+    - _product : Product
+    - _productQty : int
+    - _qtyText : TextDisplay
+
+    + {method} Product : Product <<readonly property>>
+    + {method} ProductQty : int <<property>>
+    + {method} Components : List<UIComponent> <<readonly property>>
+
+    + ProductUI(int x, int y, Product product, int productQty)	
+    + Draw() : void <<override>>
+    + HandleInput() : void <<override>>
+    + DrawTexture() : void <<override>>
+}
+
+class SummaryBox extends UIComponent implements IObserver
+{
+    - _strategy : IStrategy
+
+    - {method} Components : List<UIComponent> <<readonly property>>
+
+    + SummaryBox(int x, int y, int width, int height)
+    + Draw() : void <<override>>
+    + NextStrategy() : void
+    + Update([KeyValuePair<Product, int>? updatedProduct = null]) : void
+    + GenerateTextDisplay() : void
+}
+
+class TextDisplay extends UIComponent
+{
+    - _text : string
+    - _font : Font
+    - _center : bool
+    - _format : bool
+    - _formatObject : object?
+
+    + TextDisplay(int x, int y, int width, int height, string text, string colorHex, [bool bold = false], [bool center = false], [bool format = false], [object? formatObject = null])
+    + Draw() : void <<override>>
+    + UpdateFormatObject(object? formatObject) : void
+}
+
+class TextInput extends UIComponent
+{
+    - _text : string
+    - _collectedText : string
+    - _isReading : bool
+    - _filter : Func<char, bool>?
+
+    + {method} Text : string <<readonly property>>
+    + {method} CollectedText : string <<property>>
+
+    + TextInput(int x, int y, int width, int height, string defaultText = "", Func<char, bool>? filter = null)
+    + HandleInput() : void <<override>>
+    + Draw() : void <<override>>
+    + DrawTexture() : void <<override>>
+    + StartInput() : void
+    + StopInput() : void
+    + AcceptInput() : void
+}
+
+class Strategy
+{
+    + {static} {method} StrategyType(string strategyName) : List<Type> <<static readonly property>>
+}
+
+interface IStrategy
+{
+    + GenerateSummary() : List<string>
+    + GenerateAlert() : List<string>
+    + Update() : void
+}
+
+class LeastByItemStrategy implements IStrategy
+{
+    - _leastByItems : Dictionary<Product, int>
+    - _sumTypes : Dictionary<Type, int>
+
+    + LeastByItemStrategy()
+    + GenerateSummary() : List<string> <<override>>
+    + GenerateAlert() : List<string> <<override>>
+    + Update() : void <<override>>
+}
+
+class LeastByTypeStrategy implements IStrategy
+{
+    - _sumItems : Dictionary<Product, int>
+
+    + LeastByTypeStrategy()
+    + GenerateSummary() : List<string> <<override>>
+    + GenerateAlert() : List<string> <<override>>
+    + Update() : void <<override>>
+}
+
+class TotalAllStrategy implements IStrategy
+{
+    - _countAll : int
+    - _sumAll : int
+
+    + TotalAllStrategy()
+    + GenerateSummary() : List<string> <<override>>
+    + GenerateAlert() : List<string> <<override>>
+    + Update() : void <<override>>
+}
+
+class TotalByTypeStrategy implements IStrategy
+{
+    - _sumTypes : Dictionary<Type, int>
+
+    + TotalByTypeStrategy()
+    + GenerateSummary() : List<string> <<override>>
+    + GenerateAlert() : List<string> <<override>>
+    + Update() : void <<override>>
+}
+
+Program o-- GUI
+Inventory *-- "0..9" Product
+InventoryUI *-- "0..9" ProductUI
+GUI *-- UIState
+SummaryBox *-- IStrategy
+SummaryBox o-- Strategy
+ProductUI o-- Product
+InventoryUI --> Inventory
+TextInputHandler o-- TextInput
+AutoBuyer --> Inventory
+MainUIState --> AutoBuyer
+MainUIState *-- UIComponent
+ProductUIState *-- UIComponent
+
+@enduml

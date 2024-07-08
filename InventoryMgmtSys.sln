@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.6.33815.320
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InventoryMgmtSys", "InventoryMgmtSys\InventoryMgmtSys.csproj", "{63CD0F3D-4FD6-41DE-8E66-DE6684027414}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConcatenatedCode", "ConcatenatedCode\ConcatenatedCode.csproj", "{6915EE88-7C70-4E01-9C56-4F0A9CB68623}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{63CD0F3D-4FD6-41DE-8E66-DE6684027414}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{63CD0F3D-4FD6-41DE-8E66-DE6684027414}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{63CD0F3D-4FD6-41DE-8E66-DE6684027414}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{63CD0F3D-4FD6-41DE-8E66-DE6684027414}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6915EE88-7C70-4E01-9C56-4F0A9CB68623}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6915EE88-7C70-4E01-9C56-4F0A9CB68623}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6915EE88-7C70-4E01-9C56-4F0A9CB68623}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6915EE88-7C70-4E01-9C56-4F0A9CB68623}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2562D0D2-63E5-4822-B2D1-52C4BE117027}
+	EndGlobalSection
+EndGlobal
